@@ -34,7 +34,8 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
           backgroundColor: Colors.lightBlue,
         ),
       ),
-      home: ToDoListItemListScreen(allListItems: allListItems),
+      home: ToDoListItemListScreen(
+          allListItems: allListItems, onAddItem: addNewToDoListItem),
     );
   }
 }
@@ -176,8 +177,13 @@ class ToDoListItemDetailsScreen extends StatelessWidget {
 
 class ToDoListItemListScreen extends StatelessWidget {
   final List<ToDoListItem> allListItems;
+  final Function(ToDoListItem) onAddItem;
 
-  const ToDoListItemListScreen({super.key, required this.allListItems});
+  const ToDoListItemListScreen({
+    super.key,
+    required this.allListItems,
+    required this.onAddItem,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +204,10 @@ class ToDoListItemListScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddToDoItemScreen()),
+            MaterialPageRoute(
+                builder: (context) => AddToDoItemScreen(
+                      onAddItem: onAddItem,
+                    )),
           );
         },
         child: const Icon(Icons.add),
@@ -209,7 +218,8 @@ class ToDoListItemListScreen extends StatelessWidget {
 
 // ignore: must_be_immutable
 class AddToDoItemScreen extends StatelessWidget {
-  AddToDoItemScreen({super.key});
+  final Function(ToDoListItem) onAddItem;
+  AddToDoItemScreen({super.key, required this.onAddItem});
 
   var name = "";
   var cat = "";
@@ -272,8 +282,7 @@ class AddToDoItemScreen extends StatelessWidget {
                   eventDateTime: eventDate,
                   reminderDateTime: reminderDate,
                   category: cat);
-
-              _DoItLaterAppState().addNewToDoListItem(newItem);
+              onAddItem(newItem);
               Navigator.pop(context);
             },
             child: const Icon(Icons.add),
