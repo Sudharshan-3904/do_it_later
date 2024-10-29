@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:date_field/date_field.dart';
@@ -10,7 +12,6 @@ class DoItLaterApp extends StatefulWidget {
   const DoItLaterApp({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _DoItLaterAppState createState() => _DoItLaterAppState();
 }
 
@@ -20,6 +21,12 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
   void addNewToDoListItem(ToDoListItem latestItem) {
     setState(() {
       allListItems.add(latestItem);
+    });
+  }
+
+  void reorderItems() {
+    setState(() {
+      allListItems.sort((a, b) => a.done ? 1 : -1);
     });
   }
 
@@ -35,52 +42,37 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
         ),
       ),
       home: ToDoListItemListScreen(
-          allListItems: allListItems, onAddItem: addNewToDoListItem),
+        allListItems: allListItems,
+        onAddItem: addNewToDoListItem,
+        reorderItems: reorderItems,
+      ),
     );
   }
 }
 
 // ignore: must_be_immutable
 class ToDoListItem extends StatefulWidget {
-  bool? done;
+  bool done = false;
   final String title;
   final String description;
-  final DateTime eventDateTime;
-  final DateTime reminderDateTime;
+  final DateTime deadlineDateTime;
   final String category;
-  bool? overdue;
+  final String priority;
 
   ToDoListItem({
     super.key,
-    this.done,
     required this.title,
     required this.description,
-    required this.eventDateTime,
-    required this.reminderDateTime,
+    required this.deadlineDateTime,
     required this.category,
-    this.overdue,
+    required this.priority,
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _ToDoListItemState createState() => _ToDoListItemState();
 }
 
 class _ToDoListItemState extends State<ToDoListItem> {
-  @override
-  void initState() {
-    super.initState();
-    _checkIfOverdue();
-  }
-
-  void _checkIfOverdue() {
-    if (DateTime.now().isAfter(widget.reminderDateTime)) {
-      setState(() {
-        widget.overdue = true;
-      });
-    }
-  }
-
   String formatDateTime(DateTime dateTime) {
     return DateFormat('yyyy-MM-dd hh:mm a').format(dateTime);
   }
@@ -92,8 +84,9 @@ class _ToDoListItemState extends State<ToDoListItem> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                ToDoListItemDetailsScreen(currentListItem: widget),
+            builder: (context) => ToDoListItemDetailsScreen(
+              currentListItem: widget,
+            ),
           ),
         );
       },
@@ -112,19 +105,26 @@ class _ToDoListItemState extends State<ToDoListItem> {
                       setState(() {
                         widget.done = value ?? false;
                       });
+                      // Call reorderItems on the parent widget
+                      (context.findAncestorStateOfType<_DoItLaterAppState>()
+                              as _DoItLaterAppState)
+                          .reorderItems();
                     },
                   ),
                   Text(
                     widget.title,
                     style: TextStyle(
-                      // color: widget.overdue ? Colors.red : Colors.lightBlue[400],
                       color: Colors.lightBlue[400],
+                      decoration: widget.done == true
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
                     ),
                   ),
                 ],
               ),
-              Text(formatDateTime(widget.eventDateTime)),
+              Text(formatDateTime(widget.deadlineDateTime)),
               Text(widget.description),
+              Text('Priority: ${widget.priority}'),
             ],
           ),
         ),
@@ -154,16 +154,14 @@ class ToDoListItemDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Date and Time: ${formatDateTime(currentListItem.eventDateTime)}",
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Reminder: ${formatDateTime(currentListItem.reminderDateTime)}",
+              "Deadline: ${formatDateTime(currentListItem.deadlineDateTime)}",
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 5),
             Text("Category: ${currentListItem.category}",
+                style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 5),
+            Text("Priority: ${currentListItem.priority}",
                 style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
             Text(currentListItem.description,
@@ -178,11 +176,13 @@ class ToDoListItemDetailsScreen extends StatelessWidget {
 class ToDoListItemListScreen extends StatelessWidget {
   final List<ToDoListItem> allListItems;
   final Function(ToDoListItem) onAddItem;
+  final Function reorderItems;
 
   const ToDoListItemListScreen({
     super.key,
     required this.allListItems,
     required this.onAddItem,
+    required this.reorderItems,
   });
 
   @override
@@ -194,10 +194,8 @@ class ToDoListItemListScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: allListItems.length,
         itemBuilder: (context, index) {
-          final toDoLIstItemToDisplay = allListItems[index];
-          return ListTile(
-            title: Text(toDoLIstItemToDisplay.title),
-          );
+          final toDoListItemToDisplay = allListItems[index];
+          return toDoListItemToDisplay;
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -205,9 +203,8 @@ class ToDoListItemListScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => AddToDoItemScreen(
-                      onAddItem: onAddItem,
-                    )),
+              builder: (context) => AddToDoItemScreen(onAddItem: onAddItem),
+            ),
           );
         },
         child: const Icon(Icons.add),
@@ -216,16 +213,21 @@ class ToDoListItemListScreen extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
-class AddToDoItemScreen extends StatelessWidget {
+class AddToDoItemScreen extends StatefulWidget {
   final Function(ToDoListItem) onAddItem;
-  AddToDoItemScreen({super.key, required this.onAddItem});
 
-  var name = "";
-  var cat = "";
-  var desc = "";
-  DateTime eventDate = DateTime(2024);
-  DateTime reminderDate = DateTime(2024);
+  const AddToDoItemScreen({super.key, required this.onAddItem});
+
+  @override
+  _AddToDoItemScreenState createState() => _AddToDoItemScreenState();
+}
+
+class _AddToDoItemScreenState extends State<AddToDoItemScreen> {
+  String name = "";
+  String cat = "";
+  String desc = "";
+  String priority = "Medium";
+  DateTime deadlineDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -233,61 +235,67 @@ class AddToDoItemScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Add New Item')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(children: [
-          TextField(
-            decoration: const InputDecoration(labelText: 'Title'),
-            onChanged: (value) {
-              name = value;
-            },
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            decoration: const InputDecoration(labelText: 'Description'),
-            onChanged: (value) {
-              desc = value;
-            },
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            decoration: const InputDecoration(labelText: 'Category'),
-            onChanged: (value) {
-              cat = value;
-            },
-          ),
-          const SizedBox(height: 10),
-          DateTimeFormField(
-            decoration: const InputDecoration(labelText: 'Enter Event Date'),
-            firstDate: DateTime.now().add(const Duration(days: 30)),
-            lastDate: DateTime.now().add(const Duration(days: 90)),
-            initialPickerDateTime: DateTime.now().add(const Duration(days: 35)),
-            onChanged: (DateTime? value) {
-              eventDate = value!;
-            },
-          ),
-          const SizedBox(height: 10),
-          DateTimeFormField(
-            decoration: const InputDecoration(labelText: 'Enter Reminder Date'),
-            firstDate: DateTime.now().add(const Duration(days: 30)),
-            lastDate: DateTime.now().add(const Duration(days: 90)),
-            initialPickerDateTime: DateTime.now().add(const Duration(days: 35)),
-            onChanged: (DateTime? value) {
-              eventDate = value!;
-            },
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              ToDoListItem newItem = ToDoListItem(
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(labelText: 'Title'),
+              onChanged: (value) {
+                name = value;
+              },
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              decoration: const InputDecoration(labelText: 'Description'),
+              onChanged: (value) {
+                desc = value;
+              },
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              decoration: const InputDecoration(labelText: 'Category'),
+              onChanged: (value) {
+                cat = value;
+              },
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: 'Priority'),
+              value: priority,
+              items: ['High', 'Medium', 'Low'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  priority = newValue!;
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+            DateTimeFormField(
+                decoration: const InputDecoration(labelText: 'Deadline Date'),
+                onChanged: (DateTime? value) {
+                  deadlineDate = value!;
+                }),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                ToDoListItem newItem = ToDoListItem(
                   title: name,
                   description: desc,
-                  eventDateTime: eventDate,
-                  reminderDateTime: reminderDate,
-                  category: cat);
-              onAddItem(newItem);
-              Navigator.pop(context);
-            },
-            child: const Icon(Icons.add),
-          ),
-        ]),
+                  deadlineDateTime: deadlineDate,
+                  category: cat,
+                  priority: priority,
+                );
+                widget.onAddItem(newItem);
+                Navigator.pop(context);
+              },
+              child: const Text('Add Item'),
+            ),
+          ],
+        ),
       ),
     );
   }
