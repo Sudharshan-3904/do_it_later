@@ -1,4 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names, constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:date_field/date_field.dart';
@@ -70,12 +69,7 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Do It Later',
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
-        scaffoldBackgroundColor: Colors.lightBlue[50],
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-            backgroundColor: Colors.amberAccent, shape: CircleBorder()),
-      ),
+      theme: GLOBAL_THEME == "dark" ? ThemeData.dark() : ThemeData.light(),
       initialRoute: '/',
       routes: {
         '/': (context) => ToDoListItemListScreen(
@@ -93,7 +87,7 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
 }
 
 // ignore: must_be_immutable
-class ToDoListItem extends StatelessWidget {
+class ToDoListItem extends StatefulWidget {
   bool done = false;
   final String title;
   final String description;
@@ -109,6 +103,13 @@ class ToDoListItem extends StatelessWidget {
     required this.category,
     required this.priority,
   });
+
+  @override
+  _ToDoListItemState createState() => _ToDoListItemState();
+}
+
+class _ToDoListItemState extends State<ToDoListItem> {
+  bool done = false;
 
   String formatDateTime(DateTime dateTime) {
     return DateFormat('yyyy-MM-dd hh:mm a').format(dateTime);
@@ -127,12 +128,14 @@ class ToDoListItem extends StatelessWidget {
               children: [
                 Checkbox(
                   value: done,
-                  onChanged: (bool? value) {
-                    done = value ?? false;
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      done = newValue ?? false;
+                    });
                   },
                 ),
                 Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                     color: Colors.lightBlue[400],
                     decoration:
@@ -141,9 +144,9 @@ class ToDoListItem extends StatelessWidget {
                 ),
               ],
             ),
-            Text(formatDateTime(deadlineDateTime)),
-            Text(description),
-            Text('Priority: $priority'),
+            Text(formatDateTime(widget.deadlineDateTime)),
+            Text(widget.description),
+            Text('Priority: ${widget.priority}'),
           ],
         ),
       ),
@@ -232,10 +235,7 @@ class ToDoListItemListScreen extends StatelessWidget {
                 },
               );
             },
-            child: Hero(
-              tag: 'todoItem_$toDoListItemToDisplay',
-              child: toDoListItemToDisplay,
-            ),
+            child: toDoListItemToDisplay,
           );
         },
       ),
@@ -247,6 +247,7 @@ class ToDoListItemListScreen extends StatelessWidget {
             right: 10,
             bottom: 10,
             child: FloatingActionButton(
+              heroTag: "addNewItem",
               onPressed: () {
                 Navigator.pushNamed(context, '/add');
               },
@@ -257,6 +258,7 @@ class ToDoListItemListScreen extends StatelessWidget {
             left: 10,
             top: 15,
             child: FloatingActionButton(
+              heroTag: "settings",
               onPressed: () {
                 Navigator.pushNamed(context, '/settings');
               },
@@ -392,22 +394,78 @@ class SettingsBody extends StatefulWidget {
 }
 
 class _SettingsBodyState extends State<SettingsBody> {
+  bool isDarkMode = true;
+  double scalingFactor = 1.0;
+
+  List<double> scalingFactors = [0.5, 0.75, 1.0, 1.25, 1.5];
+
+  void toggleTheme(bool value) {
+    setState(() {
+      isDarkMode = value;
+      GLOBAL_THEME = isDarkMode ? "dark" : "light";
+      if (context.mounted) {
+        final widgetState =
+            context.findAncestorStateOfType<_DoItLaterAppState>();
+        widgetState?.setState(() {});
+      }
+    });
+  }
+
+  void changeScalingFactor(double newScale) {
+    setState(() {
+      scalingFactor = newScale;
+      GLOBAL_THEME = isDarkMode ? "dark" : "light";
+      if (context.mounted) {
+        final widgetState =
+            context.findAncestorStateOfType<_DoItLaterAppState>();
+        widgetState?.setState(() {});
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          // Reset settings or perform the action needed
-          setState(() {
-            scalingFactor = 1.0;
-            GLOBAL_THEME = "dark";
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Settings reset to default!')),
-          );
-        },
-        child: const Text('Reset Settings'),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              "Dark Mode",
+              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor),
+            ),
+            Switch(
+              value: isDarkMode,
+              onChanged: toggleTheme,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              "Scaling Factor",
+              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor),
+            ),
+            DropdownButtonFormField<double>(
+              decoration: const InputDecoration(labelText: 'Scaling Factor'),
+              value: scalingFactor,
+              items: scalingFactors.map((double value) {
+                return DropdownMenuItem<double>(
+                  value: value,
+                  child: Text(value.toStringAsFixed(2)),
+                );
+              }).toList(),
+              onChanged: (newScale) {
+                if (newScale != null) {
+                  changeScalingFactor(newScale);
+                }
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
