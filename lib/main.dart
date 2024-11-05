@@ -81,6 +81,7 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
             ),
         '/add': (context) => AddToDoItemScreen(onAddItem: addNewToDoListItem),
         '/settings': (context) => const SettingsScreen(),
+        '/credits': (context) => const CreditScreen(),
       },
     );
   }
@@ -145,7 +146,6 @@ class _ToDoListItemState extends State<ToDoListItem> {
               ],
             ),
             Text(formatDateTime(widget.deadlineDateTime)),
-            Text(widget.description),
             Text('Priority: ${widget.priority}'),
           ],
         ),
@@ -255,14 +255,18 @@ class ToDoListItemListScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 10,
-            top: 15,
+            left: 20,
+            top: 25,
             child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
               heroTag: "settings",
               onPressed: () {
                 Navigator.pushNamed(context, '/settings');
               },
-              child: const Icon(Icons.settings, size: 30),
+              child: const CircleAvatar(
+                radius: 25,
+                backgroundImage: AssetImage('profile_card.jpg'),
+              ),
             ),
           ),
         ],
@@ -394,7 +398,7 @@ class SettingsBody extends StatefulWidget {
 }
 
 class _SettingsBodyState extends State<SettingsBody> {
-  bool isDarkMode = true;
+  bool isDarkMode = GLOBAL_THEME == "dark" ? true : false;
   double scalingFactor = 1.0;
 
   List<double> scalingFactors = [0.5, 0.75, 1.0, 1.25, 1.5];
@@ -426,14 +430,64 @@ class _SettingsBodyState extends State<SettingsBody> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                CircleAvatar(
+                  radius: 100,
+                  backgroundImage: AssetImage('profile_card.jpg'),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  "Akshaya R",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 1.8),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  "akshaya.r@cit.edu.in",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const Divider(
+          height: 10,
+          thickness: 1,
+          indent: 5,
+          endIndent: 5,
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              width: 5,
+            ),
             Text(
               "Dark Mode",
-              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor),
+              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+            ),
+            const SizedBox(
+              width: 10,
             ),
             Switch(
               value: isDarkMode,
@@ -441,31 +495,353 @@ class _SettingsBodyState extends State<SettingsBody> {
             ),
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        const SizedBox(
+          height: 20,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              "Scaling Factor",
-              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  "Help and Feedback",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                ),
+              ],
             ),
-            DropdownButtonFormField<double>(
-              decoration: const InputDecoration(labelText: 'Scaling Factor'),
-              value: scalingFactor,
-              items: scalingFactors.map((double value) {
-                return DropdownMenuItem<double>(
-                  value: value,
-                  child: Text(value.toStringAsFixed(2)),
-                );
-              }).toList(),
-              onChanged: (newScale) {
-                if (newScale != null) {
-                  changeScalingFactor(newScale);
-                }
-              },
+            const SizedBox(
+              height: 2,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Learn More",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "FAQ",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Suggest a New Feature",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Sync",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const Divider(
+              height: 10,
+              thickness: 1,
+              indent: 5,
+              endIndent: 5,
+              color: Colors.grey,
             ),
           ],
         ),
+        const SizedBox(
+          height: 20,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  "About Us",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Privacy",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Export your Info",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Version",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 4,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/credits');
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    padding: EdgeInsets.zero,
+                    foregroundColor: isDarkMode
+                        ? ThemeData.light().primaryColor
+                        : ThemeData.dark().primaryColor,
+                  ),
+                  child: Text(
+                    "Credits",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                  ),
+                )
+              ],
+            ),
+            const Divider(
+              height: 10,
+              thickness: 1,
+              indent: 5,
+              endIndent: 5,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
       ],
+    );
+  }
+}
+
+class CreditScreen extends StatelessWidget {
+  const CreditScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Credits",
+          style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 1),
+        ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/sudharshan.png'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Sudharshan M Prabhu",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "71762208052@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                  Text(
+                    "71762208052@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/sujit.png'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Sujit S",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "71762208054@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                  Text(
+                    "71762208054@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/jaaswin.png'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Jaaswin S",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "71762208023@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                  Text(
+                    "71762208023@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/dharshan.png'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Dharshan S",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "71762208011@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                  Text(
+                    "71762208011@cit.edu.in",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
