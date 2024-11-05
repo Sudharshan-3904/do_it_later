@@ -716,7 +716,7 @@ class CreditScreen extends StatelessWidget {
             children: [
               const CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage('assets/sudharshan.png'),
+                backgroundImage: AssetImage('assets/sudharshan.jpg'),
               ),
               const SizedBox(width: 15),
               Column(
@@ -728,12 +728,7 @@ class CreditScreen extends StatelessWidget {
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
                   ),
                   Text(
-                    "71762208052@cit.edu.in",
-                    style: TextStyle(
-                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
-                  ),
-                  Text(
-                    "71762208052@cit.edu.in",
+                    "https://github.com/Sudharshan-3904",
                     style: TextStyle(
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
                   ),
@@ -761,12 +756,7 @@ class CreditScreen extends StatelessWidget {
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
                   ),
                   Text(
-                    "71762208054@cit.edu.in",
-                    style: TextStyle(
-                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
-                  ),
-                  Text(
-                    "71762208054@cit.edu.in",
+                    "https://github.com/Sujit-S-2908",
                     style: TextStyle(
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
                   ),
@@ -782,24 +772,19 @@ class CreditScreen extends StatelessWidget {
             children: [
               const CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage('assets/jaaswin.png'),
+                backgroundImage: AssetImage('assets/jaaswin.jpg'),
               ),
               const SizedBox(width: 15),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Jaaswin S",
+                    "Jaaswin CKS",
                     style: TextStyle(
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
                   ),
                   Text(
-                    "71762208023@cit.edu.in",
-                    style: TextStyle(
-                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
-                  ),
-                  Text(
-                    "71762208023@cit.edu.in",
+                    "https://github.com/JASWINCKS",
                     style: TextStyle(
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
                   ),
@@ -827,12 +812,7 @@ class CreditScreen extends StatelessWidget {
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
                   ),
                   Text(
-                    "71762208011@cit.edu.in",
-                    style: TextStyle(
-                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
-                  ),
-                  Text(
-                    "71762208011@cit.edu.in",
+                    "https://github.com/shanshadow",
                     style: TextStyle(
                         fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
                   ),
