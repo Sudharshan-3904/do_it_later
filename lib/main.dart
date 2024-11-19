@@ -119,6 +119,7 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
             ),
         '/add': (context) => AddToDoItemScreen(onAddItem: addNewToDoListItem),
         '/settings': (context) => const SettingsScreen(),
+        '/credits': (context) => const CreditScreen(),
       },
     );
   }
@@ -228,7 +229,6 @@ class _ToDoListItemState extends State<ToDoListItem> {
               ],
             ),
             Text(formatDateTime(widget.deadlineDateTime)),
-            Text(widget.description),
             Text('Priority: ${widget.priority}'),
           ],
         ),
@@ -338,14 +338,18 @@ class ToDoListItemListScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 10,
-            top: 15,
+            left: 20,
+            top: 25,
             child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
               heroTag: "settings",
               onPressed: () {
                 Navigator.pushNamed(context, '/settings');
               },
-              child: const Icon(Icons.settings, size: 30),
+              child: const CircleAvatar(
+                radius: 25,
+                backgroundImage: AssetImage('profile_card.jpg'),
+              ),
             ),
           ),
         ],
@@ -477,7 +481,7 @@ class SettingsBody extends StatefulWidget {
 }
 
 class _SettingsBodyState extends State<SettingsBody> {
-  bool isDarkMode = true;
+  bool isDarkMode = GLOBAL_THEME == "dark" ? true : false;
   double scalingFactor = 1.0;
 
   void toggleTheme(bool value) {
@@ -495,14 +499,64 @@ class _SettingsBodyState extends State<SettingsBody> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                CircleAvatar(
+                  radius: 100,
+                  backgroundImage: AssetImage('profile_card.jpg'),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  "Akshaya R",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 1.8),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  "akshaya.r@cit.edu.in",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const Divider(
+          height: 10,
+          thickness: 1,
+          indent: 5,
+          endIndent: 5,
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              width: 5,
+            ),
             Text(
               "Dark Mode",
-              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor),
+              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+            ),
+            const SizedBox(
+              width: 10,
             ),
             Switch(
               value: isDarkMode,
@@ -510,7 +564,336 @@ class _SettingsBodyState extends State<SettingsBody> {
             ),
           ],
         ),
+<<<<<<< HEAD
+=======
+        const SizedBox(
+          height: 20,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  "Help and Feedback",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Learn More",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "FAQ",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Suggest a New Feature",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Sync",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const Divider(
+              height: 10,
+              thickness: 1,
+              indent: 5,
+              endIndent: 5,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  "About Us",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Privacy",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Export your Info",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 7,
+                ),
+                Text(
+                  "Version",
+                  style:
+                      TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 4,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/credits');
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    padding: EdgeInsets.zero,
+                    foregroundColor: isDarkMode
+                        ? ThemeData.light().primaryColor
+                        : ThemeData.dark().primaryColor,
+                  ),
+                  child: Text(
+                    "Credits",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.6),
+                  ),
+                )
+              ],
+            ),
+            const Divider(
+              height: 10,
+              thickness: 1,
+              indent: 5,
+              endIndent: 5,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+>>>>>>> 9b6f17b474424caf10d0ccfb14d560c54996623e
       ],
+    );
+  }
+}
+
+class CreditScreen extends StatelessWidget {
+  const CreditScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Credits",
+          style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor * 1),
+        ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/sudharshan.jpg'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Sudharshan M Prabhu",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "https://github.com/Sudharshan-3904",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/sujit.png'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Sujit S",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "https://github.com/Sujit-S-2908",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/jaaswin.jpg'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Jaaswin CKS",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "https://github.com/JASWINCKS",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 45,
+                backgroundImage: AssetImage('assets/dharshan.png'),
+              ),
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Dharshan S",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.8),
+                  ),
+                  Text(
+                    "https://github.com/shanshadow",
+                    style: TextStyle(
+                        fontSize: MAIN_FONT_SIZE * scalingFactor * 0.5),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
