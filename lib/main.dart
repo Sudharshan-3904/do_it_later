@@ -1,5 +1,10 @@
+// ignore_for_file: avoid_print
+
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'package:date_field/date_field.dart';
 
 // declaring the theme constants
@@ -19,34 +24,48 @@ class DoItLaterApp extends StatefulWidget {
 }
 
 class _DoItLaterAppState extends State<DoItLaterApp> {
-  List<ToDoListItem> allListItems = [
-    ToDoListItem(
-      title: '1',
-      description: 'one',
-      category: 'samples',
-      priority: 'Low',
-      deadlineDateTime: DateTime.now(),
-    ),
-    ToDoListItem(
-      title: '2',
-      description: 'two',
-      category: 'samples',
-      priority: 'Low',
-      deadlineDateTime: DateTime.now(),
-    ),
-    ToDoListItem(
-      title: '3',
-      description: 'three',
-      category: 'samples',
-      priority: 'Low',
-      deadlineDateTime: DateTime.now(),
-    ),
-  ];
+  List<ToDoListItem> allListItems = [];
+  // List<ToDoListItem> allListItems = [
+  //   ToDoListItem(
+  //     title: '1',
+  //     description: 'one',
+  //     category: 'samples',
+  //     priority: 'Low',
+  //     deadlineDateTime: DateTime.now(),
+  //   ),
+  //   ToDoListItem(
+  //     title: '2',
+  //     description: 'two',
+  //     category: 'samples',
+  //     priority: 'Low',
+  //     deadlineDateTime: DateTime.now(),
+  //   ),
+  //   ToDoListItem(
+  //     title: '3',
+  //     description: 'three',
+  //     category: 'samples',
+  //     priority: 'Low',
+  //     deadlineDateTime: DateTime.now(),
+  //   ),
+  // ];
 
-  void addNewToDoListItem(ToDoListItem latestItem) {
+  Future<void> addNewToDoListItem(ToDoListItem latestItem) async {
     setState(() {
       allListItems.add(latestItem);
     });
+
+    await updateJsonFile();
+  }
+
+  Future<void> updateJsonFile() async {
+    try {
+      final file = File('assets/data.json');
+      final jsonString = json
+          .encode(allListItems.map((item) => ("${item.toJSON()}, ")).toList());
+      await file.writeAsString(jsonString);
+    } catch (e) {
+      print(e);
+    }
   }
 
   void reorderItems() {
@@ -63,6 +82,25 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
     setState(() {
       allListItems.remove(item);
     });
+  }
+
+  @override
+  void initState() {
+    // final file = File('assets/data.json');
+    Future.delayed(Duration.zero, () async {
+      try {
+        final jsonString = await rootBundle.loadString('assets/data.json');
+        final jsonData = (json.decode(jsonString))["items"];
+
+        for (var element in jsonData) {
+          addNewToDoListItem(ToDoListItem.fromJSON(element));
+        }
+      } catch (e) {
+        print(e);
+      }
+    });
+
+    super.initState();
   }
 
   @override
@@ -103,6 +141,51 @@ class ToDoListItem extends StatefulWidget {
     required this.category,
     required this.priority,
   });
+
+  // factory ToDoListItem.fromJSON(dynamic json) {
+  //   DateFormat dateFormat = DateFormat("dd-MM-yyyy HH:mm:ss");
+
+  //   return ToDoListItem(
+  //       title: json["title"],
+  //       description: json["description"],
+  //       deadlineDateTime: dateFormat.parse(json["deadlineDateTime"]),
+  //       category: json["category"],
+  //       priority: json["priority"]);
+  // }
+
+  Map<String, dynamic> toJSON() {
+    return {
+      'title': title,
+      'description': description,
+      'category': category,
+      'priority': priority,
+      'deadlineDateTime': deadlineDateTime.toIso8601String(),
+    };
+  }
+
+  factory ToDoListItem.fromJSON(Map<String, dynamic> json) {
+    DateFormat dateFormat = DateFormat("dd-MM-yyyy HH:mm:ss");
+
+    return ToDoListItem(
+      title: json['title'],
+      description: json['description'],
+      category: json['category'],
+      priority: json['priority'],
+      deadlineDateTime: dateFormat.parse(json['deadlineDateTime']),
+    );
+  }
+
+  factory ToDoListItem.toJSON(Map<String, dynamic> json) {
+    DateFormat dateFormat = DateFormat("dd-MM-yyyy HH:mm:ss");
+
+    return ToDoListItem(
+      title: json['title'],
+      description: json['description'],
+      category: json['category'],
+      priority: json['priority'],
+      deadlineDateTime: dateFormat.parse(json['deadlineDateTime']),
+    );
+  }
 
   @override
   _ToDoListItemState createState() => _ToDoListItemState();
@@ -397,23 +480,9 @@ class _SettingsBodyState extends State<SettingsBody> {
   bool isDarkMode = true;
   double scalingFactor = 1.0;
 
-  List<double> scalingFactors = [0.5, 0.75, 1.0, 1.25, 1.5];
-
   void toggleTheme(bool value) {
     setState(() {
       isDarkMode = value;
-      GLOBAL_THEME = isDarkMode ? "dark" : "light";
-      if (context.mounted) {
-        final widgetState =
-            context.findAncestorStateOfType<_DoItLaterAppState>();
-        widgetState?.setState(() {});
-      }
-    });
-  }
-
-  void changeScalingFactor(double newScale) {
-    setState(() {
-      scalingFactor = newScale;
       GLOBAL_THEME = isDarkMode ? "dark" : "light";
       if (context.mounted) {
         final widgetState =
@@ -438,30 +507,6 @@ class _SettingsBodyState extends State<SettingsBody> {
             Switch(
               value: isDarkMode,
               onChanged: toggleTheme,
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(
-              "Scaling Factor",
-              style: TextStyle(fontSize: MAIN_FONT_SIZE * scalingFactor),
-            ),
-            DropdownButtonFormField<double>(
-              decoration: const InputDecoration(labelText: 'Scaling Factor'),
-              value: scalingFactor,
-              items: scalingFactors.map((double value) {
-                return DropdownMenuItem<double>(
-                  value: value,
-                  child: Text(value.toStringAsFixed(2)),
-                );
-              }).toList(),
-              onChanged: (newScale) {
-                if (newScale != null) {
-                  changeScalingFactor(newScale);
-                }
-              },
             ),
           ],
         ),
