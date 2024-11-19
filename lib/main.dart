@@ -54,7 +54,7 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
       allListItems.add(latestItem);
     });
 
-    await updateJsonFile();
+    // await updateJsonFile();
   }
 
   Future<void> updateJsonFile() async {
@@ -295,6 +295,8 @@ class ToDoListItemListScreen extends StatelessWidget {
                         Text(
                           "Deadline: ${formatDateTime(toDoListItemToDisplay.deadlineDateTime)}",
                         ),
+                        Text(
+                            "Description: ${toDoListItemToDisplay.description}"),
                         const SizedBox(height: 16),
                         ListTile(
                           leading: const Icon(Icons.edit),
@@ -421,7 +423,7 @@ class _AddToDoItemScreenState extends State<AddToDoItemScreen> {
             const SizedBox(height: 10),
             DateTimeFormField(
               decoration: const InputDecoration(labelText: 'Deadline Date'),
-              onChanged: (DateTime? value) {
+              onSaved: (DateTime? value) {
                 if (value != null) {
                   deadlineDate = value;
                 }
@@ -564,8 +566,6 @@ class _SettingsBodyState extends State<SettingsBody> {
             ),
           ],
         ),
-<<<<<<< HEAD
-=======
         const SizedBox(
           height: 20,
         ),
@@ -762,7 +762,6 @@ class _SettingsBodyState extends State<SettingsBody> {
         const SizedBox(
           height: 20,
         ),
->>>>>>> 9b6f17b474424caf10d0ccfb14d560c54996623e
       ],
     );
   }
