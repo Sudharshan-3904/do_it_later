@@ -26,7 +26,7 @@ flutter:
     assets:
       - assets/profile_card.jpg
       - assets/sudharshan.jpg
-      - assets/sujit.png
+      - assets/sujit.jpg
       - assets/jaaswin.jpg
       - assets/dharshan.png
       - assets/data.json

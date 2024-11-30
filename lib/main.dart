@@ -54,7 +54,7 @@ class _DoItLaterAppState extends State<DoItLaterApp> {
       allListItems.add(latestItem);
     });
 
-    // await updateJsonFile();
+    await updateJsonFile();
   }
 
   Future<void> updateJsonFile() async {
@@ -373,7 +373,7 @@ class _AddToDoItemScreenState extends State<AddToDoItemScreen> {
   String title = "";
   String category = "";
   String description = "";
-  String priority = "Medium";
+  String priority = "Low";
   DateTime deadlineDate = DateTime.now();
 
   @override
@@ -815,7 +815,7 @@ class CreditScreen extends StatelessWidget {
             children: [
               const CircleAvatar(
                 radius: 45,
-                backgroundImage: AssetImage('assets/sujit.png'),
+                backgroundImage: AssetImage('assets/sujit.jpg'),
               ),
               const SizedBox(width: 15),
               Column(
